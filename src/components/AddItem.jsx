@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { db, auth } from '../firebase/firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, query, getDocs, where } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { TextField, Button, Container, Typography, CircularProgress, Box } from '@mui/material';
 import { Navigate } from 'react-router-dom';
@@ -12,9 +12,23 @@ const AddItem = ({ dark, setDark, logOut }) => {
     const [description, setDescription] = useState('');
     const [photo, setPhoto] = useState(null);
     const [loading, setLoading] = useState(false);
-
+    async function userAddressNotSet() {
+        const q = query(collection(db, 'users'), where('uid', '==', auth.currentUser.uid));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            console.log(querySnapshot.docs[0].data())
+            return true;
+        }
+        return false;
+    }
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const isUserSet = await userAddressNotSet()
+        if (!isUserSet) {
+            alert('set your address before adding item')
+            window.location.href = '/profile'
+            return
+        }
         setLoading(true);
         try {
             //below is only for image compression
@@ -89,6 +103,7 @@ const AddItem = ({ dark, setDark, logOut }) => {
     if (!user) {
         return <Navigate to="/" state={{ from: '/add-item' }} />
     }
+
     return (
         <>
             <NavBar dark={dark} setDark={setDark} user={auth.currentUser} logOut={logOut} />

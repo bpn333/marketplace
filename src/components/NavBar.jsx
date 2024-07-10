@@ -28,12 +28,12 @@ function Drawer_menu({ dark, setDark }) {
     };
     function lightModeOn() {
         setDark(false);
-        document.cookie = "color=light;max-age=100000";
+        document.cookie = "color=light;max-age=100000;path=/";
         handleClose();
     }
     function darkModeOn() {
         setDark(true);
-        document.cookie = "color=dark;max-age=100000";
+        document.cookie = "color=dark;max-age=100000;path=/";
         handleClose();
     }
     return (
@@ -92,7 +92,7 @@ function UserIcon({ user, logOut }) {
     }
     return (
         <>
-            <Avatar src={user.photoURL} onClick={handleClick} sx={{
+            <Avatar src={user?.photoURL} onClick={handleClick} sx={{
                 cursor: 'pointer',
                 height: 50,
                 width: 50

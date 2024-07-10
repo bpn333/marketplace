@@ -13,6 +13,7 @@ import AddItem from "./components/AddItem";
 import { auth } from "./firebase/firebase";
 import SearchItem from "./components/SearchItem";
 import Item from "./components/Item";
+import Stats from "./components/Stats";
 function logOut() {
   auth.signOut();
   window.location.href = '/'
@@ -60,6 +61,7 @@ function App() {
             <Route path='/search/' element={<SearchItem />} />
             <Route path='/item/:id' element={<Item dark={dark} setDark={setDark} logOut={logOut} />} />
             <Route path='/item/' element={<Item />} />
+            <Route path='/stats' element={<Stats dark={dark} setDark={setDark} logOut={logOut} />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

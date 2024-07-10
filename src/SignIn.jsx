@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { auth } from "./firebase/firebase";
-import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import GoogleButton from "react-google-button";
 import { Navigate, useLocation } from "react-router-dom";
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, TextField, Typography, Checkbox, FormControlLabel } from "@mui/material";
 import EmailIcon from '@mui/icons-material/Email';
 function SignIn() {
+    const [newUser, setNewUser] = useState(false)
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
+    const [cpass, setCPass] = useState('')
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
     const location = useLocation();
@@ -26,19 +28,29 @@ function SignIn() {
     }
     const signEmail = (e) => {
         e.preventDefault()
-        createUserWithEmailAndPassword(auth, email, pass)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                console.log('Successfully signed in with email:', user);
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.error('Error signing in with email:', errorCode, errorMessage);
-            });
+        if (newUser) {
+            createUserWithEmailAndPassword(auth, email, pass)
+                .catch((error) => {
+                    console.error('Error signing in with email:', error.code, error.message);
+                });
+        }
+        else if (!newUser) {
+            signInWithEmailAndPassword(auth, email, pass)
+                .catch((error) => {
+                    console.error('Error signing in with email:', error.code, error.message);
+                });
+        }
     };
     if (user) {
         return <Navigate to={from} />
+    }
+    function validate() {
+        if (newUser) {
+            return !(cpass == pass && cpass.length >= 6 && /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(email))
+        }
+        else if (!newUser) {
+            return !(pass.length >= 6 && /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(email))
+        }
     }
     return (
         <>
@@ -77,11 +89,23 @@ function SignIn() {
                                 sx={{ m: 1, minWidth: 300 }}
                                 autoComplete="on"
                             />
-                            <Button type="submit" variant="outlined" sx={{
-                                m: 3, p: 1
-                            }}>
+                            {newUser && <TextField
+                                label="confirm password"
+                                type="password"
+                                value={cpass}
+                                error={!cpass ? false : cpass != pass}
+                                onChange={(e) => setCPass(e.target.value)}
+                                sx={{ m: 1, minWidth: 300 }}
+                                autoComplete="on"
+                            />}
+                            <FormControlLabel control={<Checkbox checked={newUser} onClick={() => setNewUser(!newUser)} />} label='New User' />
+                            <Button type="submit" variant="outlined" disabled={validate()}
+                                sx={{
+                                    m: 2, p: 1
+                                }}
+                            >
                                 <EmailIcon sx={{ mr: 1 }} />
-                                <Typography variant="h6">Sign in with email</Typography>
+                                <Typography variant="h6">{newUser ? <>Sign up with email</> : <>Sign in with email</>}</Typography>
                             </Button>
                             <GoogleButton onClick={signGoogle} />
                         </Container>

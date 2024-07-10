@@ -12,18 +12,24 @@ import Profile from "./components/Profile";
 import AddItem from "./components/AddItem";
 import { auth } from "./firebase/firebase";
 import SearchItem from "./components/SearchItem";
-
+import Item from "./components/Item";
 function logOut() {
   auth.signOut();
   window.location.href = '/'
 }
 
 const darkTheme = createTheme({
+  typography: {
+    fontFamily: 'Roboto, Arial, sans-serif',
+  },
   palette: {
     mode: 'dark',
   },
 });
 const lightTheme = createTheme({
+  typography: {
+    fontFamily: 'Roboto, Arial, sans-serif',
+  },
   palette: {
     mode: 'light',
   },
@@ -52,6 +58,8 @@ function App() {
             <Route path='/add-item' element={<AddItem dark={dark} setDark={setDark} logOut={logOut} />} />
             <Route path='/search/:query' element={<SearchItem />} />
             <Route path='/search/' element={<SearchItem />} />
+            <Route path='/item/:id' element={<Item dark={dark} setDark={setDark} logOut={logOut} />} />
+            <Route path='/item/' element={<Item />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

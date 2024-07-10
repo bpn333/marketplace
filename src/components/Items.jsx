@@ -3,30 +3,38 @@ import { Card, CardContent, Typography, Grid, Box, Avatar } from '@mui/material'
 function Items({ items }) {
     return (
         <Grid container spacing={3} sx={{
-            padding: 3,
-            justifyContent: 'center'
+            p: 3
         }}>
             {items.map((item) => (
-                <Grid item key={item.id} xs={6} md={3}>
+                <Grid item key={item.id} xs={12} sm={6} md={3} sx={{ cursor: 'pointer' }} onClick={() => window.location.href = '/item/' + item.id}>
                     <Card>
                         <CardContent sx={{
-                            p: 3
+                            p: 2
                         }}>
-                            <img src={item.photo} alt={item.name} style={{ maxWidth: '100%', height: 'auto', marginTop: '10px' }} />
-                            <Typography variant="h5" component="div">
+                            <img src={item.photo} alt={item.name} style={{ maxWidth: '100%', height: 'auto' }} />
+                            <Typography variant="h5" component="div" sx={{
+                                fontFamily: 'cursive'
+                            }}>
                                 {item.name}
                             </Typography>
-                            <Typography color="text.secondary">
-                                Price: {item.price} /-
+                            <Typography color="text.secondary" sx={{
+                                color: 'lime',
+                                textAlign: 'right',
+                                fontFamily: 'fantasy',
+                                letterSpacing: '2px'
+                            }}>
+                                {item.price} /-
                             </Typography>
-                            <Typography variant="body2" component="div">
+                            <Typography variant="body2" component="div" sx={{
+                                fontFamily: 'cursive'
+                            }}>
                                 {item.description.slice(0, 10)}
                             </Typography>
                             <Box sx={{
                                 display: 'flex',
                                 flexDirection: 'row',
                                 justifyContent: 'space-between',
-                                p: 2
+                                pt: 1
                             }}>
                                 <span>
                                     <Avatar src={item.owner_img} sx={{ width: 40, height: 40, display: 'inline-flex' }} />

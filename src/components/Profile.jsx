@@ -1,10 +1,11 @@
 import NavBar from "./NavBar";
 import { Navigate } from "react-router-dom";
-import { Card, Grid, Box, CardContent, Avatar, Typography, Button } from "@mui/material";
+import { Card, Grid, CardContent, Avatar, Typography } from "@mui/material";
 import { auth, db } from "../firebase/firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, where, getDocs, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import Items from "./Items";
+import UserDetails from "./UserDetails";
 function Profile({ dark, setDark, logOut }) {
     const [items, setItems] = useState([]);
     if (!auth.currentUser) {
@@ -12,7 +13,8 @@ function Profile({ dark, setDark, logOut }) {
     }
     useEffect(() => {
         const fetchItems = async () => {
-            const querySnapshot = await getDocs(collection(db, 'items'), where('owner', '==', auth.currentUser.uid));
+            const q = query(collection(db, 'items'), where('owner', '==', auth.currentUser.uid))
+            const querySnapshot = await getDocs(q);
             const itemsData = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data()
@@ -38,17 +40,7 @@ function Profile({ dark, setDark, logOut }) {
                             <Typography variant="h5" gutterBottom>
                                 {auth.currentUser.displayName}
                             </Typography>
-                            <Typography variant="body1" color="textSecondary" gutterBottom>
-                                {auth.currentUser.email}
-                            </Typography>
-                            <Box mt={2}>
-                                <Button variant="contained" color="primary" sx={{ mr: 2 }}>
-                                    Edit Profile
-                                </Button>
-                                <Button variant="outlined" color="secondary" onClick={logOut}>
-                                    Logout
-                                </Button>
-                            </Box>
+                            <UserDetails logOut={logOut} useruid={auth.currentUser.uid} email={auth.currentUser.email} editable={true} />
                         </Grid>
                     </Grid>
                 </CardContent>

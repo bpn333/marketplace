@@ -15,6 +15,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PublishIcon from '@mui/icons-material/Publish';
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
 
 function Drawer_menu({ dark, setDark }) {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -112,6 +113,12 @@ function UserIcon({ user, logOut }) {
                     window.location.href = '/add-item'
                 }}>
                     <PublishIcon sx={{ mr: 3 }} /><Typography variant="h6">Sell</Typography>
+                </MenuItem>
+                <MenuItem onClick={() => {
+                    handleClose();
+                    window.location.href = '/stats'
+                }}>
+                    <QueryStatsIcon sx={{ mr: 3 }} /><Typography variant="h6">Stats</Typography>
                 </MenuItem>
                 <MenuItem onClick={() => {
                     handleClose();

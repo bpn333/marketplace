@@ -29,13 +29,25 @@ const AddItem = ({ dark, setDark, logOut }) => {
             await loadImage(URL.createObjectURL(photo));
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            let ratio = 1;
-            if (img.width > 720 || img.height > 480) {
-                ratio = Math.max(img.width / 720, img.height / 480);
+            const targetWidth = 720;
+            const targetHeight = 480;
+            const targetAspectRatio = targetWidth / targetHeight;
+            const imgAspectRatio = img.width / img.height;
+            let cropWidth, cropHeight, offsetX, offsetY;
+            if (imgAspectRatio > targetAspectRatio) {
+                cropHeight = img.height;
+                cropWidth = img.height * targetAspectRatio;
+                offsetX = (img.width - cropWidth) / 2;
+                offsetY = 0;
+            } else {
+                cropWidth = img.width;
+                cropHeight = img.width / targetAspectRatio;
+                offsetX = 0;
+                offsetY = (img.height - cropHeight) / 2;
             }
-            canvas.width = Math.floor(img.width / ratio);
-            canvas.height = Math.floor(img.height / ratio);
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            ctx.drawImage(img, offsetX, offsetY, cropWidth, cropHeight, 0, 0, targetWidth, targetHeight);
             const compressedImageData = canvas.toDataURL('image/jpeg', 0.8);
             const base64Response = await fetch(compressedImageData);
             const blob = await base64Response.blob();

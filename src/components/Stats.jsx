@@ -47,8 +47,8 @@ const Stats = ({ dark, setDark, logOut }) => {
                     <Grid item xs={12}>
                         <Card>
                             <CardContent>
-                                <Typography variant="h5" component="div">
-                                    Items Bought
+                                <Typography variant="h5" component="div" sx={{ color: 'red' }}>
+                                    Items Bought: ${itemsBought?.length && itemsBought.reduce((a, b) => a + parseInt(b.price), 0)}
                                 </Typography>
                                 <Items items={itemsBought} />
                                 {itemsBought.length === 0 && (
@@ -60,8 +60,8 @@ const Stats = ({ dark, setDark, logOut }) => {
                     <Grid item xs={12}>
                         <Card>
                             <CardContent>
-                                <Typography variant="h5" component="div">
-                                    Items Sold
+                                <Typography variant="h5" component="div" sx={{ color: 'lime' }}>
+                                    Items Sold: ${itemsSold?.length && itemsSold.reduce((a, b) => a + parseInt(b.price), 0)}
                                 </Typography>
                                 <Items items={itemsSold} />
                                 {itemsSold.length === 0 && (

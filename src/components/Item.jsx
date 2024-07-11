@@ -28,7 +28,8 @@ function Item({ dark, setDark, logOut }) {
     async function placeOrder() {
         const docRef = doc(db, 'items', itemId);
         await updateDoc(docRef, {
-            sold: true
+            sold: true,
+            sold_on: new Date().toISOString()
         });
         setSold(true);
         await addDoc(collection(db, 'orders'), {
@@ -62,19 +63,19 @@ function Item({ dark, setDark, logOut }) {
                     </Grid>
                     <Grid item xs={12} md={4}>
                         <CardContent>
-                            <Typography variant="h4" component="h2" gutterBottom>
+                            <Typography variant="h4" component="h2" sx={{ fontWeight: '1000', textTransform: 'capitalize' }} gutterBottom>
                                 {item.name}
                             </Typography>
-                            <Typography variant="body1" color="textSecondary" component="p">
+                            <Typography variant="body1" color="textSecondary" component="p" sx={{ fontFamily: 'cursive' }}>
                                 {item.description}
                             </Typography>
                             <Typography variant="h6" color="lime" component="p" style={{ marginTop: '20px' }}>
-                                Price: {item.price} /-
+                                ${item.price}
                             </Typography>
                             <Button
                                 variant="contained"
                                 color="primary"
-                                style={{ margin: '20px', width: '300px', height: '50px' }}
+                                style={{ marginTop: '10px', marginRight: '10px', width: '300px', height: '50px', fontFamily: 'fantasy', letterSpacing: '2px' }}
                                 onClick={placeOrder}
                                 disabled={sold || item.owner == auth.currentUser.uid}
                             >
@@ -83,7 +84,7 @@ function Item({ dark, setDark, logOut }) {
                             {auth.currentUser.uid == item.owner && !sold &&
                                 <Button
                                     variant="contained"
-                                    style={{ margin: '20px', width: '300px', height: '50px', backgroundColor: 'red' }}
+                                    style={{ marginTop: '10px', marginRight: '10px', width: '300px', height: '50px', backgroundColor: 'red', fontFamily: 'fantasy', letterSpacing: '2px' }}
                                     onClick={deleteItem}
                                 >
                                     Delete
@@ -100,7 +101,8 @@ function Item({ dark, setDark, logOut }) {
                                 title={item.owner_name || 'NULL'}
                             />
                             <Box style={{ padding: '16px' }}>
-                                <Typography color='secondary'>uploaded on: {item.date.split('T')[0]} at {item.date.split('T')[1].split('.')[0]}</Typography>
+                                <Typography color='secondary'>Uploaded On: {item.date.split('T')[0]} at {item.date.split('T')[1].split('.')[0]}</Typography>
+                                {item.sold_on && <Typography color='secondary' sx={{ color: 'red' }}>Sold On: {item.sold_on.split('T')[0]} at {item.sold_on.split('T')[1].split('.')[0]}</Typography>}
                                 <Typography variant="h6" color="primary">
                                     Owner Details:
                                 </Typography>
@@ -108,7 +110,7 @@ function Item({ dark, setDark, logOut }) {
                             </Box>
                         </Card>
                     </Grid>
-                </Grid>
+                </Grid >
             </>
         );
     }

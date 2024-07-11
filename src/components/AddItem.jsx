@@ -23,13 +23,13 @@ const AddItem = ({ dark, setDark, logOut }) => {
     }
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         const isUserSet = await userAddressNotSet()
         if (!isUserSet) {
             alert('set your address before adding item')
             window.location.href = '/profile'
             return
         }
-        setLoading(true);
         try {
             //below is only for image compression
             let img = new Image();
@@ -74,7 +74,7 @@ const AddItem = ({ dark, setDark, logOut }) => {
             const photoURL = await getDownloadURL(storageRef);
 
             const docRef = await addDoc(collection(db, 'items'), {
-                name,
+                name: name.toLowerCase(),
                 price,
                 description,
                 owner: user.uid,
@@ -135,6 +135,7 @@ const AddItem = ({ dark, setDark, logOut }) => {
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         fullWidth
+                        multiline
                         required
                     />
                     <Box sx={{

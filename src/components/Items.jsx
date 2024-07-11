@@ -12,23 +12,21 @@ function Items({ items }) {
                             p: 2
                         }}>
                             <img src={item.photo} alt={item.name} style={{ maxWidth: '100%', height: 'auto' }} />
-                            <Typography variant="h5" component="div" sx={{
-                                fontFamily: 'cursive'
-                            }}>
+                            <Typography variant="h5" component="div" sx={{ fontWeight: '1000', textTransform: 'capitalize' }}>
                                 {item.name}
                             </Typography>
                             <Typography color="text.secondary" sx={{
-                                color: 'lime',
+                                color: item.sold ? 'gray' : 'lime',
                                 textAlign: 'right',
                                 fontFamily: 'fantasy',
                                 letterSpacing: '2px'
                             }}>
-                                {item.price} /-
+                                ${item.price}
                             </Typography>
                             <Typography variant="body2" component="div" sx={{
                                 fontFamily: 'cursive'
                             }}>
-                                {item.description.slice(0, 10)}
+                                {item.description.slice(0, 80)}
                             </Typography>
                             <Box sx={{
                                 display: 'flex',

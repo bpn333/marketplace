@@ -23,7 +23,11 @@ function SignIn() {
     }, []);
     function signGoogle() {
         const googleAuthProvider = new GoogleAuthProvider()
-        signInWithPopup(auth, googleAuthProvider);
+        signInWithPopup(auth, googleAuthProvider)
+            .catch((error) => {
+                console.error('Error signing in with email:', error.code, error.message);
+                alert(error.message)
+            });
     }
     const signEmail = (e) => {
         e.preventDefault()
@@ -31,12 +35,14 @@ function SignIn() {
             createUserWithEmailAndPassword(auth, email, pass)
                 .catch((error) => {
                     console.error('Error signing in with email:', error.code, error.message);
+                    alert(error.message)
                 });
         }
         else if (!newUser) {
             signInWithEmailAndPassword(auth, email, pass)
                 .catch((error) => {
                     console.error('Error signing in with email:', error.code, error.message);
+                    alert(error.message)
                 });
         }
     };

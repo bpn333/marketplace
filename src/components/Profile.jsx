@@ -38,7 +38,7 @@ function Profile({ dark, setDark, logOut }) {
                         </Grid>
                         <Grid item xs={10} sm={8}>
                             <Typography variant="h5" gutterBottom>
-                                {auth.currentUser.displayName}
+                                {auth.currentUser.displayName ? auth.currentUser.displayName : auth.currentUser.email.split('@')[0]}
                             </Typography>
                             <UserDetails logOut={logOut} useruid={auth.currentUser.uid} email={auth.currentUser.email} editable={true} />
                         </Grid>

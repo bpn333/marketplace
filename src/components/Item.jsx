@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Grid, Box, Card, CardHeader, CardMedia, CardContent, Typography, Avatar, Button } from '@mui/material';
 import { getDoc, doc, addDoc, collection, updateDoc, deleteDoc } from "firebase/firestore";
@@ -24,7 +24,9 @@ function Item({ dark, setDark, logOut }) {
     if (!itemId) {
         window.location.href = '/';
     }
-
+    if (!auth.currentUser) {
+        return <Navigate to="/" state={{ from: '/item/' + itemId }} />
+    }
     async function placeOrder() {
         const docRef = doc(db, 'items', itemId);
         await updateDoc(docRef, {

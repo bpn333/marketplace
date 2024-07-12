@@ -69,6 +69,7 @@ function UserDetails({ useruid, logOut, email, editable }) {
             email: email,
             street: street,
             city: city,
+            state: state,
             country: country
         }
         if (!documentId) {

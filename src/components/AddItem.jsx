@@ -79,7 +79,7 @@ const AddItem = ({ dark, setDark, logOut }) => {
                 description,
                 owner: user.uid,
                 owner_img: user.photoURL,
-                owner_name: user.displayName,
+                owner_name: user.displayName ? user.displayName : user.email.split('@')[0],
                 photo: photoURL,
                 date: new Date().toISOString(),
             });

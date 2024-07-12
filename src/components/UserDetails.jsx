@@ -141,10 +141,10 @@ function UserDetails({ useruid, logOut, email, editable }) {
                     </Typography>
                     {editable &&
                         <Box mt={2}>
-                            <Button variant="contained" color="primary" sx={{ mr: 2 }} onClick={addUserDetails}>
+                            <Button variant="contained" color="primary" sx={{ mr: 2, mb: 1 }} onClick={addUserDetails}>
                                 Edit Address
                             </Button>
-                            <Button variant="outlined" color="secondary" onClick={logOut}>
+                            <Button variant="outlined" color="secondary" sx={{ mr: 2, mb: 1 }} onClick={logOut}>
                                 Logout
                             </Button>
                         </Box>

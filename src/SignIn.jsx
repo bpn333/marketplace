@@ -76,8 +76,7 @@ function SignIn() {
                             justifyContent: 'center',
                             alignItems: 'center'
                         }}>
-                            <Typography variant="h1" color='secondary' sx={{ mb: 2 }}>Marketplace</Typography>
-
+                            <Typography color='secondary' sx={{ mb: 2, fontSize: { xs: '50px', md: '100px' } }}>Marketplace</Typography>
                             <TextField
                                 label="email"
                                 value={email}

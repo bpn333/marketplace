@@ -54,16 +54,15 @@ function Item({ dark, setDark, logOut }) {
             <>
                 <NavBar dark={dark} setDark={setDark} user={auth.currentUser} logOut={logOut} />
                 <Grid container spacing={2} style={{ maxWidth: 1200, margin: '20px auto' }}>
-                    <Grid item xs={12} md={8}>
+                    <Grid item xs={11} md={8}>
                         <CardMedia
                             component="img"
-                            height="400"
                             image={item.photo}
                             alt={item.name}
-                            style={{ objectFit: 'contain', borderRadius: '8px' }}
+                            style={{ objectFit: 'cover', borderRadius: '8px', height: { xs: '360', md: '480' }, width: { xs: '480', md: '720' } }}
                         />
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={11} md={4}>
                         <CardContent>
                             <Typography variant="h4" component="h2" sx={{ fontWeight: '1000', textTransform: 'capitalize' }} gutterBottom>
                                 {item.name}
@@ -77,24 +76,26 @@ function Item({ dark, setDark, logOut }) {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                style={{ marginTop: '10px', marginRight: '10px', width: '300px', height: '50px', fontFamily: 'fantasy', letterSpacing: '2px' }}
+                                style={{ marginTop: '10px', marginRight: '10px', height: '50px', fontFamily: 'fantasy', letterSpacing: '2px' }}
                                 onClick={placeOrder}
                                 disabled={sold || item.owner == auth.currentUser.uid}
+                                fullWidth
                             >
                                 {sold ? "Sold" : "Buy Now"}
                             </Button>
                             {auth.currentUser.uid == item.owner && !sold &&
                                 <Button
                                     variant="contained"
-                                    style={{ marginTop: '10px', marginRight: '10px', width: '300px', height: '50px', backgroundColor: 'red', fontFamily: 'fantasy', letterSpacing: '2px' }}
+                                    style={{ marginTop: '10px', marginRight: '10px', height: '50px', backgroundColor: 'red', fontFamily: 'fantasy', letterSpacing: '2px' }}
                                     onClick={deleteItem}
+                                    fullWidth
                                 >
                                     Delete
                                 </Button>
                             }
                         </CardContent>
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={11}>
                         <Card>
                             <CardHeader
                                 avatar={

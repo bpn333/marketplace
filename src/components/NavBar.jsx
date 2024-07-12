@@ -139,7 +139,7 @@ function NavBar({ dark, setDark, user, logOut }) {
         <AppBar position="sticky">
             <Toolbar sx={{ justifyContent: 'space-between' }}>
                 <Drawer_menu dark={dark} setDark={setDark} />
-                <Typography variant="h3" sx={{ userSelect: 'none' }}>Marketplace</Typography>
+                <Typography sx={{ userSelect: 'none', fontSize: { xs: '30px', sm: '40', md: '50px' } }}>Marketplace</Typography>
                 <UserIcon user={user} logOut={logOut} />
             </Toolbar>
         </AppBar>

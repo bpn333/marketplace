@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { db, auth } from '../firebase/firebase';
 import { collection, addDoc, query, getDocs, where } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { TextField, Button, Container, Typography, CircularProgress, Box } from '@mui/material';
+import { TextField, Button, Container, Typography, CircularProgress, Grid } from '@mui/material';
 import { Navigate } from 'react-router-dom';
 import NavBar from './NavBar';
 const AddItem = ({ dark, setDark, logOut }) => {
@@ -138,12 +138,7 @@ const AddItem = ({ dark, setDark, logOut }) => {
                         multiline
                         required
                     />
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        p: 2
-                    }}>
+                    <Grid xs={12} item container justifyContent={"space-between"}>
                         <input
                             type="file"
                             accept="image/*"
@@ -152,10 +147,10 @@ const AddItem = ({ dark, setDark, logOut }) => {
                             required
                         />
 
-                        <Button type="submit" variant="contained" color="primary" disabled={loading}>
+                        <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 1 }}>
                             {loading ? <CircularProgress size={24} /> : 'Add Item'}
                         </Button>
-                    </Box>
+                    </Grid>
                 </form>
             </Container>
         </>

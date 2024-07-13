@@ -53,13 +53,13 @@ function Item({ dark, setDark, logOut }) {
         return (
             <>
                 <NavBar dark={dark} setDark={setDark} user={auth.currentUser} logOut={logOut} />
-                <Grid container spacing={2} style={{ maxWidth: 1200, margin: '20px auto' }}>
-                    <Grid item xs={11} md={8}>
+                <Grid container spacing={2} sx={{ maxWidth: { xs: '100%', lg: 1300 }, m: '20px auto' }}>
+                    <Grid item xs={11} md={7}>
                         <CardMedia
                             component="img"
                             image={item.photo}
                             alt={item.name}
-                            style={{ objectFit: 'cover', borderRadius: '8px', height: { xs: '360', md: '480' }, width: { xs: '480', md: '720' } }}
+                            style={{ objectFit: 'cover', borderRadius: '8px' }}
                         />
                     </Grid>
                     <Grid item xs={11} md={4}>

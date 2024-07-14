@@ -1,15 +1,17 @@
 import { useParams, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Grid, Box, Card, CardHeader, CardMedia, CardContent, Typography, Avatar, Button } from '@mui/material';
+import { Grid, Box, Card, CardHeader, CardMedia, CardContent, Typography, Avatar, Button, Container } from '@mui/material';
 import { getDoc, doc, addDoc, collection, updateDoc, deleteDoc } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
 import NavBar from "./NavBar";
 import UserDetails from "./UserDetails";
+import QRCode from "react-qr-code";
 
 function Item({ dark, setDark, logOut }) {
     const { id: itemId } = useParams();
     const [item, setItem] = useState(null);
     const [sold, setSold] = useState(false);
+    const [ordering, setOrdering] = useState(false)
 
     useEffect(() => {
         const fetchItem = async () => {
@@ -27,6 +29,12 @@ function Item({ dark, setDark, logOut }) {
     if (!auth.currentUser) {
         return <Navigate to="/" state={{ from: '/item/' + itemId }} />
     }
+    function confirmPlaceOrder() {
+        const confirm = window.confirm('Are you sure you want to order ' + item.name + ' for $' + item.price + ' ?');
+        if (confirm) {
+            setOrdering(true)
+        }
+    }
     async function placeOrder() {
         const docRef = doc(db, 'items', itemId);
         await updateDoc(docRef, {
@@ -43,11 +51,41 @@ function Item({ dark, setDark, logOut }) {
     }
     async function deleteItem() {
         const confirm = window.confirm('Are you sure you want to delete it?')
-        console.log(confirm)
         if (confirm) {
             await deleteDoc(doc(db, 'items', itemId))
             window.location.href = '/home'
         }
+    }
+    if (ordering) {
+        return (
+            <Container
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '100vh',
+                    textAlign: 'center',
+                }}
+            >
+                <Typography color='primary' sx={{ fontSize: { xs: '40px', md: '70px' } }}>Payment Portal</Typography>
+                <Box sx={{ p: 1, border: '3px solid #333' }}>
+                    <QRCode value={`upi://pay?pa=bipinlamsal2004@oksbi&am=${item.price}&tr=${itemId}`} onClick={() => window.open(`upi://pay?pa=bipinlamsal2004@oksbi&am=${item.price}&tr=${itemId}`, '_blank')} />
+                </Box>
+                <Typography> scan the QR ☝️ and complete payment</Typography>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    sx={{ marginTop: 3 }}
+                    onClick={() => {
+                        setOrdering(false)
+                        placeOrder()
+                    }}
+                >
+                    Done
+                </Button>
+            </Container>
+        )
     }
     if (item) {
         return (
@@ -77,7 +115,7 @@ function Item({ dark, setDark, logOut }) {
                                 variant="contained"
                                 color="primary"
                                 style={{ marginTop: '10px', marginRight: '10px', height: '50px', fontFamily: 'fantasy', letterSpacing: '2px' }}
-                                onClick={placeOrder}
+                                onClick={confirmPlaceOrder}
                                 disabled={sold || item.owner == auth.currentUser.uid}
                                 fullWidth
                             >

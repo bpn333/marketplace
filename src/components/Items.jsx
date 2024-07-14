@@ -35,11 +35,11 @@ function Items({ items }) {
                                 pt: 1
                             }}>
                                 <span>
-                                    <Avatar src={item.owner_img} sx={{ width: 40, height: 40, display: 'inline-flex' }} />
+                                    <Avatar src={item.owner_img || `https://picsum.photos/500/500?random=${item.date}`} sx={{ width: 40, height: 40, display: 'inline-flex', border: item.owner_img ? 'none' : '2px solid pink' }} />
                                     <Typography variant="body2" color="text.primary" sx={{
                                         textAlign: 'center'
                                     }}>
-                                        {item.owner_name}
+                                        {item.owner_name || 'unknown'}
                                     </Typography>
                                 </span>
                                 <span>

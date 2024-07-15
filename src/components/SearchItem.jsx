@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { Container, TextField } from "@mui/material";
 import { useState, useEffect } from "react";
 import Items from "./Items";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 
 function SearchItem() {
@@ -11,23 +11,20 @@ function SearchItem() {
     const [value, setValue] = useState(searchQuery || "");
 
     useEffect(() => {
-        const fetchItems = async () => {
+        const q = query(collection(db, 'items'), where("name", ">=", value.toLowerCase()), where("name", "<=", value.toLowerCase() + "\uf8ff"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
             if (value.trim() === "") {
                 setItems([]);
                 return;
             }
-
-            const q = query(collection(db, 'items'), where("name", ">=", value.toLowerCase()), where("name", "<=", value.toLowerCase() + "\uf8ff"));
-
-            const querySnapshot = await getDocs(q);
             const itemsData = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data()
             }));
             setItems(itemsData);
-        };
+        })
 
-        fetchItems();
+        return unsubscribe
     }, [value]);
 
     const searchWithQuery = (e) => {

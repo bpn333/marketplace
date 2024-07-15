@@ -1,6 +1,6 @@
 import { useParams, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Grid, Box, Card, CardHeader, CardMedia, CardContent, Typography, Avatar, Button, Container } from '@mui/material';
+import { Grid, Box, Card, CardHeader, CardMedia, CardContent, Typography, Avatar, Button, Container, CircularProgress } from '@mui/material';
 import { getDoc, doc, addDoc, collection, updateDoc, deleteDoc } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
 import NavBar from "./NavBar";
@@ -12,6 +12,7 @@ function Item({ dark, setDark, logOut }) {
     const [item, setItem] = useState(null);
     const [sold, setSold] = useState(false);
     const [ordering, setOrdering] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const fetchItem = async () => {
@@ -19,6 +20,7 @@ function Item({ dark, setDark, logOut }) {
             const snapshot = await getDoc(docRef);
             setItem(snapshot.data());
             setSold(snapshot.data()?.sold);
+            setLoading(false)
         };
         fetchItem();
     }, [itemId]);
@@ -41,13 +43,14 @@ function Item({ dark, setDark, logOut }) {
             sold: true,
             sold_on: new Date().toISOString()
         });
-        setSold(true);
         await addDoc(collection(db, 'orders'), {
             item: itemId,
             owner: item.owner,
             buyer: auth.currentUser.uid,
             date: new Date().toISOString()
         });
+        setSold(true);
+        alert('Order placed sucessfully. Your item will be delivered within 7 days. Our representative will contact your email for further info.')
     }
     async function deleteItem() {
         const confirm = window.confirm('Are you sure you want to delete it?')
@@ -156,7 +159,22 @@ function Item({ dark, setDark, logOut }) {
         );
     }
 
-    return null;
+    return (
+        <>
+            <Container
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '100vh',
+                    textAlign: 'center',
+                }}
+            >
+                {loading ? <CircularProgress /> : <Typography color="secondary" sx={{ fontSize: { xs: '40px', md: '70px' } }}> 😔 ITEM NOT FOUND 😔</Typography>}
+            </Container>
+        </>
+    );
 }
 
 export default Item;

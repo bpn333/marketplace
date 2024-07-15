@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Grid, Card, CardContent, Typography } from '@mui/material';
 import { auth, db } from '../firebase/firebase';
-import { collection, query, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, query, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import Items from './Items';
 import NavBar from './NavBar';
 
@@ -9,9 +9,8 @@ const Stats = ({ dark, setDark, logOut }) => {
     const [itemsSold, setItemsSold] = useState([]);
     const [itemsBought, setItemsBought] = useState([]);
     useEffect(() => {
-        const fetchItems = async () => {
-            const q = query(collection(db, 'orders'));
-            const querySnapshot = await getDocs(q);
+        const q = query(collection(db, 'orders'));
+        const unsubscribe = onSnapshot(q, async (querySnapshot) => {
             const itemsData = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data()
@@ -35,8 +34,8 @@ const Stats = ({ dark, setDark, logOut }) => {
             );
             setItemsSold(soldItems);
             setItemsBought(boughtItems);
-        };
-        fetchItems();
+        })
+        return unsubscribe
     }, []);
 
     return (

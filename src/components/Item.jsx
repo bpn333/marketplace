@@ -1,7 +1,7 @@
 import { useParams, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Grid, Box, Card, CardHeader, CardMedia, CardContent, Typography, Avatar, Button, Container, CircularProgress } from '@mui/material';
-import { getDoc, doc, addDoc, collection, updateDoc, deleteDoc } from "firebase/firestore";
+import { doc, addDoc, collection, updateDoc, deleteDoc, onSnapshot } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
 import NavBar from "./NavBar";
 import UserDetails from "./UserDetails";
@@ -15,15 +15,14 @@ function Item({ dark, setDark, logOut }) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const fetchItem = async () => {
-            const docRef = doc(db, 'items', itemId);
-            const snapshot = await getDoc(docRef);
+        const docRef = doc(db, 'items', itemId);
+        const unsubscribe = onSnapshot(docRef, (snapshot) => {
             setItem(snapshot.data());
             setSold(snapshot.data()?.sold);
             setLoading(false)
-        };
-        fetchItem();
-    }, [itemId]);
+        });
+        return unsubscribe
+    }, []);
 
     if (!itemId) {
         window.location.href = '/';
@@ -42,15 +41,18 @@ function Item({ dark, setDark, logOut }) {
         await updateDoc(docRef, {
             sold: true,
             sold_on: new Date().toISOString()
-        });
-        await addDoc(collection(db, 'orders'), {
-            item: itemId,
-            owner: item.owner,
-            buyer: auth.currentUser.uid,
-            date: new Date().toISOString()
-        });
-        setSold(true);
-        alert('Order placed sucessfully. Your item will be delivered within 7 days. Our representative will contact your email for further info.')
+        }).then(async () => {
+            await addDoc(collection(db, 'orders'), {
+                item: itemId,
+                owner: item.owner,
+                buyer: auth.currentUser.uid,
+                date: new Date().toISOString()
+            });
+            setSold(true);
+            alert('Order placed sucessfully. Your item will be delivered within 7 days. Our representative will contact your email for further info.')
+        }).catch((error) => {
+            alert(error.message)
+        })
     }
     async function deleteItem() {
         const confirm = window.confirm('Are you sure you want to delete it?')

@@ -63,13 +63,13 @@ function Drawer_menu({ dark, setDark }) {
                     </ListItemButton>
 
                     <ListItemButton onClick={() => {
-                        window.open('https://github.com/bpn333');
+                        window.open('https://github.com/bpn333/marketplace');
                         handleClose()
                     }}>
                         <ListItemIcon>
                             <GitHubIcon />
                         </ListItemIcon>
-                        <ListItemText primary="@bpn333" />
+                        <ListItemText primary="@marketplace" />
                     </ListItemButton>
                 </List>
             </Drawer>

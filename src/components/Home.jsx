@@ -2,12 +2,12 @@ import NavBar from "./NavBar";
 import { auth, db } from "../firebase/firebase";
 import { Navigate } from "react-router-dom";
 import Items from "./Items";
-import { collection, limit, orderBy, query, onSnapshot } from 'firebase/firestore';
+import { collection, orderBy, query, onSnapshot } from 'firebase/firestore';
 import { useEffect, useState } from "react";
 function Home({ dark, setDark, logOut }) {
     const [items, setItems] = useState([]);
     useEffect(() => {
-        const q = query(collection(db, 'items'), orderBy('date', 'desc'), limit(15))
+        const q = query(collection(db, 'items'), orderBy('date', 'desc'))
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const itemsData = querySnapshot.docs.map((doc) => ({
                 id: doc.id,

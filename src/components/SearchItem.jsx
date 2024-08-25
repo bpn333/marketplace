@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Container, TextField } from "@mui/material";
+import { Container, TextField, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import Items from "./Items";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
@@ -42,7 +42,10 @@ function SearchItem() {
                 value={value}
                 onChange={searchWithQuery}
             />
-            <Items items={items} />
+            {items.length ? <Items items={items} /> :
+                value && <Typography sx={{ fontSize: '30px', color: 'red', textAlign: 'center' }}>No Item Found</Typography>
+            }
+
         </Container>
     );
 }

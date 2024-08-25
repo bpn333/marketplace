@@ -1,7 +1,7 @@
 import { useParams, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Grid, Box, Card, CardHeader, CardMedia, CardContent, Typography, Avatar, Button, Container, CircularProgress } from '@mui/material';
-import { doc, addDoc, collection, updateDoc, deleteDoc, onSnapshot } from "firebase/firestore";
+import { doc, addDoc, collection, updateDoc, deleteDoc, onSnapshot, deleteField, query, where, getDocs } from "firebase/firestore";
 import { db, auth } from "../firebase/firebase";
 import NavBar from "./NavBar";
 import UserDetails from "./UserDetails";
@@ -13,6 +13,7 @@ function Item({ dark, setDark, logOut }) {
     const [sold, setSold] = useState(false);
     const [ordering, setOrdering] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [isRecentBuyer, setIsRecentBuyer] = useState(false)
 
     useEffect(() => {
         const docRef = doc(db, 'items', itemId);
@@ -23,6 +24,24 @@ function Item({ dark, setDark, logOut }) {
         });
         return unsubscribe
     }, []);
+    useEffect(() => {
+        const verifyAuthenticity = async () => {
+            const q = query(collection(db, 'orders'), where('item', '==', itemId));
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                const firstDoc = querySnapshot.docs[0];
+                const data = firstDoc.data();
+                if (data.buyer === auth.currentUser.uid) {
+                    setIsRecentBuyer(true)
+                    return
+                }
+            }
+            setIsRecentBuyer(false)
+        };
+        if (item && sold && ((new Date() - new Date(item.sold_on)) / (1000 * 60 * 60 * 24) < 1)) {
+            verifyAuthenticity();
+        }
+    }, [sold]);
 
     if (!itemId) {
         window.location.href = '/';
@@ -50,6 +69,7 @@ function Item({ dark, setDark, logOut }) {
             });
             setSold(true);
             alert('Order placed sucessfully. Your item will be delivered within 7 days. Our representative will contact your email for further info.')
+            setIsRecentBuyer(true)
         }).catch((error) => {
             alert(error.message)
         })
@@ -61,6 +81,24 @@ function Item({ dark, setDark, logOut }) {
             window.location.href = '/home'
         }
     }
+    async function refundItem() {
+        const confirm = window.confirm('Are you sure you want to refund it?');
+        if (confirm) {
+            await updateDoc(doc(db, 'items', itemId), {
+                sold: deleteField(),
+                sold_on: deleteField()
+            }).then(async () => {
+                const q = query(collection(db, 'orders'), where('item', '==', itemId));
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach(async (docSnapshot) => {
+                    await deleteDoc(doc(db, 'orders', docSnapshot.id));
+                });
+                setIsRecentBuyer(false)
+                alert("Refund request received. Your money will be returned in 3 business days. Contact to our mail for further support.")
+            })
+        }
+    }
+
     if (ordering) {
         return (
             <Container
@@ -124,7 +162,10 @@ function Item({ dark, setDark, logOut }) {
                                 disabled={sold || item.owner == auth.currentUser.uid}
                                 fullWidth
                             >
-                                {sold ? "Sold" : "Buy Now"}
+                                {sold ?
+                                    isRecentBuyer ? "Processing" : "Sold"
+                                    :
+                                    "Buy Now"}
                             </Button>
                             {auth.currentUser.uid == item.owner && !sold &&
                                 <Button
@@ -134,6 +175,16 @@ function Item({ dark, setDark, logOut }) {
                                     fullWidth
                                 >
                                     Delete
+                                </Button>
+                            }
+                            {isRecentBuyer &&
+                                <Button
+                                    variant="contained"
+                                    style={{ marginTop: '10px', marginRight: '10px', height: '50px', backgroundColor: 'red', fontFamily: 'fantasy', letterSpacing: '2px' }}
+                                    onClick={refundItem}
+                                    fullWidth
+                                >
+                                    Refund
                                 </Button>
                             }
                         </CardContent>
